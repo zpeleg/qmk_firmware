@@ -3,7 +3,7 @@
 from milc import cli
 
 from qmk.decorators import automagic_keyboard, automagic_keymap
-from qmk.info import info_json
+from qmk.info import info_json, rgblight_animations, rgblight_properties, rgblight_toggles
 from qmk.path import is_keyboard, normpath
 
 usb_properties = {
@@ -132,6 +132,35 @@ def layout_aliases(layout_aliases):
     return '\n'.join(aliases)
 
 
+def rgblight(rgblight):
+    """Return the config.h lines that setup rgblight.
+    """
+    rgblight_config = []
+
+    for json_key, config_key in rgblight_properties.items():
+        if json_key in rgblight:
+            rgblight_config.append('')
+            rgblight_config.append('#ifndef %s' % (config_key,))
+            rgblight_config.append('#   define %s %s' % (config_key, rgblight[json_key]))
+            rgblight_config.append('#endif // %s' % (config_key,))
+
+    for json_key, config_key in rgblight_toggles.items():
+        if rgblight.get(json_key):
+            rgblight_config.append('')
+            rgblight_config.append('#ifndef %s' % (config_key,))
+            rgblight_config.append('#   define %s' % (config_key,))
+            rgblight_config.append('#endif // %s' % (config_key,))
+
+    for json_key, config_key in rgblight_animations.items():
+        if 'animations' in rgblight and rgblight['animations'].get(json_key):
+            rgblight_config.append('')
+            rgblight_config.append('#ifndef %s' % (config_key,))
+            rgblight_config.append('#   define %s' % (config_key,))
+            rgblight_config.append('#endif // %s' % (config_key,))
+
+    return '\n'.join(rgblight_config)
+
+
 @cli.argument('-o', '--output', arg_only=True, type=normpath, help='File to write to')
 @cli.argument('-q', '--quiet', arg_only=True, action='store_true', help="Quiet mode, only output error messages")
 @cli.argument('-kb', '--keyboard', help='Keyboard to generate config.h for.')
@@ -171,6 +200,9 @@ def generate_config_h(cli):
 
     if 'manufacturer' in kb_info_json:
         config_h_lines.append(manufacturer(kb_info_json['manufacturer']))
+
+    if 'rgblight' in kb_info_json:
+        config_h_lines.append(rgblight(kb_info_json['rgblight']))
 
     if 'matrix_pins' in kb_info_json:
         if 'direct' in kb_info_json['matrix_pins']:

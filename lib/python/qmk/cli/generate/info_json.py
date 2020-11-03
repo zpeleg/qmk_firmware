@@ -34,7 +34,7 @@ def generate_info_json(cli):
     kb_info_json = info_json(cli.config.generate_info_json.keyboard)
     pared_down_json = {}
 
-    for key in ('manufacturer', 'maintainer', 'usb', 'keyboard_name', 'width', 'height', 'diode_direction', 'matrix_pins', 'url'):
+    for key in ('manufacturer', 'maintainer', 'usb', 'keyboard_name', 'width', 'height', 'debounce', 'diode_direction', 'layout_aliases', 'matrix_pins', 'rgblight', 'url'):
         if key in kb_info_json:
             pared_down_json[key] = kb_info_json[key]
 

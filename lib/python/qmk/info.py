@@ -13,6 +13,35 @@ from qmk.keymap import list_keymaps
 from qmk.makefile import parse_rules_mk_file
 from qmk.math import compute
 
+rgblight_properties = {
+    'led_count': 'RGBLED_NUM',
+    'pin': 'RGB_DI_PIN',
+    'split_count': 'RGBLED_SPLIT',
+    'max_brightness': 'RGBLIGHT_LIMIT_VAL',
+    'hue_steps': 'RGBLIGHT_HUE_STEP',
+    'saturation_steps': 'RGBLIGHT_SAT_STEP',
+    'brightness_steps': 'RGBLIGHT_VAL_STEP'
+}
+
+rgblight_toggles = {
+    'sleep': 'RGBLIGHT_SLEEP',
+    'split': 'RGBLIGHT_SPLIT'
+}
+
+rgblight_animations = {
+    'all': 'RGBLIGHT_ANIMATIONS',
+    'alternating': 'RGBLIGHT_EFFECT_ALTERNATING',
+    'breathing': 'RGBLIGHT_EFFECT_BREATHING',
+    'christmas': 'RGBLIGHT_EFFECT_CHRISTMAS',
+    'knight': 'RGBLIGHT_EFFECT_KNIGHT',
+    'rainbow_mood': 'RGBLIGHT_EFFECT_RAINBOW_MOOD',
+    'rainbow_swirl': 'RGBLIGHT_EFFECT_RAINBOW_SWIRL',
+    'rgb_test': 'RGBLIGHT_EFFECT_RGB_TEST',
+    'snake': 'RGBLIGHT_EFFECT_SNAKE',
+    'static_gradient': 'RGBLIGHT_EFFECT_STATIC_GRADIENT',
+    'twinkle': 'RGBLIGHT_EFFECT_TWINKLE'
+}
+
 
 def info_json(keyboard):
     """Generate the info.json data for a specific keyboard.
@@ -94,6 +123,42 @@ def _extract_diode_direction(info_data, config_c):
     return info_data
 
 
+def _extract_rgblight(info_data, config_c):
+    """Handle the rgblight configuration
+    """
+    rgblight = info_data.get('rgblight', {})
+    animations = rgblight.get('animations', {})
+
+    for json_key, config_key in rgblight_properties.items():
+        if config_key in config_c:
+            if json_key in rgblight:
+                _log_warning(info_data, 'RGB Light: %s is specified in both info.json and config.h, the config.h value wins.' % (json_key,))
+
+            rgblight[json_key] = config_c[config_key]
+
+    for json_key, config_key in rgblight_toggles.items():
+        if config_key in config_c:
+            if json_key in rgblight:
+                _log_warning(info_data, 'RGB Light: %s is specified in both info.json and config.h, the config.h value wins.', json_key)
+
+            rgblight[json_key] = config_c[config_key]
+
+    for json_key, config_key in rgblight_animations.items():
+        if config_key in config_c:
+            if json_key in animations:
+                _log_warning(info_data, 'RGB Light: animations: %s is specified in both info.json and config.h, the config.h value wins.' % (json_key,))
+
+            animations[json_key] = config_c[config_key]
+
+    if animations:
+        rgblight['animations'] = animations
+
+    if rgblight:
+        info_data['rgblight'] = rgblight
+
+    return info_data
+
+
 def _extract_matrix_info(info_data, config_c):
     """Populate the matrix information.
     """
@@ -171,7 +236,7 @@ def _extract_usb_info(info_data, config_c):
 
 
 def _extract_config_h(info_data):
-    """Pull some keyboard information from existing rules.mk files
+    """Pull some keyboard information from existing config.h files
     """
     config_c = config_h(info_data['keyboard_folder'])
 
@@ -179,6 +244,7 @@ def _extract_config_h(info_data):
     _extract_diode_direction(info_data, config_c)
     _extract_matrix_info(info_data, config_c)
     _extract_usb_info(info_data, config_c)
+    _extract_rgblight(info_data, config_c)
 
     return info_data
 
@@ -348,7 +414,8 @@ def merge_info_jsons(keyboard, info_data):
                 info_data[key] = new_info_data[key]
 
         # Deep merge certain keys
-        for key in ('layout_aliases', 'matrix_pins', 'usb'):
+        # FIXME(skullydazed/anyone): this should be generalized more so that we can inteligently merge more than one level deep. It would be nice if we could filter on valid keys too. That may have to wait for a future where we use openapi or something.
+        for key in ('layout_aliases', 'matrix_pins', 'rgblight', 'usb'):
             if key in new_info_data:
                 if key not in info_data:
                     info_data[key] = {}
