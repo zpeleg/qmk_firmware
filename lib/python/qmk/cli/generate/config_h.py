@@ -61,6 +61,18 @@ def generate_config_h(cli):
         config_h_lines.append('#endif // MANUFACTURER')
 
     if 'matrix_pins' in kb_info_json:
+        if 'direct' in kb_info_json['matrix_pins']:
+            rows = []
+
+            for row in kb_info_json['matrix_pins']['direct']:
+                cols = ','.join([col or 'NO_PIN' for col in row])
+                rows.append('{' + cols + '}')
+
+            config_h_lines.append('')
+            config_h_lines.append('#ifndef DIRECT_PINS')
+            config_h_lines.append('#    define DIRECT_PINS {%s}' % (','.join(rows),))
+            config_h_lines.append('#endif // DIRECT_PINS')
+
         if 'cols' in kb_info_json['matrix_pins']:
             cols = ','.join(kb_info_json['matrix_pins']['cols'])
             col_num = len(kb_info_json['matrix_pins']['cols'])
@@ -71,7 +83,7 @@ def generate_config_h(cli):
             config_h_lines.append('#endif // MATRIX_COLS')
             config_h_lines.append('')
             config_h_lines.append('#ifndef MATRIX_COL_PINS')
-            config_h_lines.append('#    define MATRIX_COL_PINS { %s }' % (cols,))
+            config_h_lines.append('#    define MATRIX_COL_PINS {%s}' % (cols,))
             config_h_lines.append('#endif // MATRIX_COL_PINS')
 
         if 'rows' in kb_info_json['matrix_pins']:
@@ -84,7 +96,7 @@ def generate_config_h(cli):
             config_h_lines.append('#endif // MATRIX_ROWS')
             config_h_lines.append('')
             config_h_lines.append('#ifndef MATRIX_ROW_PINS')
-            config_h_lines.append('#    define MATRIX_ROW_PINS { %s }' % (rows,))
+            config_h_lines.append('#    define MATRIX_ROW_PINS {%s}' % (rows,))
             config_h_lines.append('#endif // MATRIX_ROW_PINS')
 
     if 'usb' in kb_info_json:

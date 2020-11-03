@@ -28,8 +28,8 @@ def info_json(keyboard):
         'keyboard_folder': str(keyboard),
         'keymaps': {},
         'layouts': {},
-        'parse-errors': [],
-        'parse-warnings': [],
+        'parse_errors': [],
+        'parse_warnings': [],
         'maintainer': 'qmk',
     }
 
