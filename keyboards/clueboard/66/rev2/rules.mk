@@ -13,4 +13,3 @@ BOOTLOADER = atmel-dfu
 
 # Build Options
 BACKLIGHT_DRIVER = custom
-LAYOUTS = 66_ansi 66_iso

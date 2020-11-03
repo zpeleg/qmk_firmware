@@ -6,6 +6,21 @@
   "width": 10,
   "debounce": "20",
   "diode_direction": "ROW2COL",
+  "features": {
+    "audio": true,
+    "backlight": true,
+    "bluetooth": false,
+    "bootmagic": false,
+    "command": true,
+    "console": true,
+    "extrakey": true,
+    "lto": true,
+    "midi": false,
+    "mousekey": true,
+    "nkro": false,
+    "rgblight": true,
+    "unicode": false
+  },
   "matrix_pins": {
     "cols": ["F1", " F7", " F6"],
     "rows": ["F0", " F5", " F4", " B4"]
@@ -18,7 +33,9 @@
     "saturation_steps": "17"
   },
   "usb": {
-    "pid": "0x2330"
+    "device_ver": "0x0001",
+    "pid": "0x2330",
+    "vid": "0xC1ED"
   },
   "layout_aliases": {
     "LAYOUT": "LAYOUT_all"

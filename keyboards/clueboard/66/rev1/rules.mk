@@ -10,4 +10,3 @@ MCU = atmega32u4
 #   ATmega32A    bootloadHID
 #   ATmega328P   USBasp
 BOOTLOADER = atmel-dfu
-LAYOUTS = 66_ansi 66_iso

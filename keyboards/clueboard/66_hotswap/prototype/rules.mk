@@ -17,4 +17,3 @@ BOOTLOADER = atmel-dfu
 BACKLIGHT_DRIVER = custom
 
 EXTRAFLAGS += -flto
-LAYOUTS = 66_ansi

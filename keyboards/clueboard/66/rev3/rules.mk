@@ -15,4 +15,3 @@ BOOTLOADER = atmel-dfu
 #   comment out to disable the options.
 #
 BACKLIGHT_DRIVER = custom
-LAYOUTS = 66_ansi 66_iso
