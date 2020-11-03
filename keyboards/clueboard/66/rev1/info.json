@@ -4,8 +4,22 @@
   "maintainer": "skullydazed",
   "height": 5,
   "width": 16.5,
-  "diode_direction": "COL2ROW",
   "debounce": "5",
+  "diode_direction": "COL2ROW",
+  "features": {
+    "audio": false,
+    "backlight": false,
+    "bluetooth": false,
+    "bootmagic": false,
+    "command": false,
+    "console": true,
+    "extrakey": true,
+    "midi": false,
+    "mousekey": true,
+    "nkro": true,
+    "rgblight": false,
+    "unicode": false
+  },
   "matrix_pins": {
     "cols": ["B3", " F1", " F4", " F5", " F6", " C7", " C6", " B6", " B5", " B4", " D7", " D6", " D4", " F7", " B0", " B1"],
     "rows": ["D1", " D0", " D2", " D5", " D3"]
@@ -21,11 +35,14 @@
     "saturation_steps": "17"
   },
   "usb": {
-    "pid": "0x2301"
+    "device_ver": "0x0001",
+    "pid": "0x2301",
+    "vid": "0xC1ED"
   },
+  "community_layouts": ["66_ansi", "66_iso"],
   "layout_aliases": {
-    "LAYOUT": "LAYOUT_all",
-    "KEYMAP": "LAYOUT_all"
+    "KEYMAP": "LAYOUT_all",
+    "LAYOUT": "LAYOUT_all"
   },
   "layouts": {
     "LAYOUT_66_ansi": {
