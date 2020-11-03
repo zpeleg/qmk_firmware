@@ -15,7 +15,7 @@ class InfoJSONEncoder(json.JSONEncoder):
         self.indentation_level = 0
 
         if not self.indent:
-            self.indent = 2
+            self.indent = 4
 
     def encode(self, obj):
         """Encode JSON objects for QMK.
