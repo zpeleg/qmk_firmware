@@ -20,28 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config_common.h"
 
-/* Set 0 if debouncing isn't needed */
-#define DEBOUNCE 5
-
 /* Number of backlighting levels */
 #define BACKLIGHT_LEVELS 3
-
-/* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
-#define LOCKING_SUPPORT_ENABLE
-/* Locking resynchronize hack */
-#define LOCKING_RESYNC_ENABLE
-
-/* Underlight configuration
- */
-#define RGB_DI_PIN F6
-#define RGBLIGHT_ANIMATIONS
-#define RGBLED_NUM 4     // Number of LEDs
-#define RGBLIGHT_HUE_STEP 10
-#define RGBLIGHT_SAT_STEP 17
-#define RGBLIGHT_VAL_STEP 17
-
-/* Layout aliases */
-#define LAYOUT LAYOUT_numpad_5x4
-#define KEYMAP LAYOUT_numpad_5x4
 
 #endif

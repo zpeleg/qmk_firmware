@@ -5,11 +5,25 @@
   "width": 4,
   "height": 5,
   "matrix_pins": {
-    "cols": ["F4", " E6", " B1", " D2"],
-    "rows": ["B0", " D3", " D5", " D4", " D6"]
+    "cols": ["F4", "E6", "B1", "D2"],
+    "rows": ["B0", "D3", "D5", "D4", "D6"]
+  },
+  "rgblight": {
+    "animations": {
+      "all": true
+    },
+    "brightness_steps": "17",
+    "hue_steps": "10",
+    "led_count": "4",
+    "pin": "F6",
+    "saturation_steps": "17"
   },
   "usb": {
     "pid": "0x2312"
+  },
+  "layout_aliases": {
+    "KEYMAP": "LAYOUT_numpad_5x4",
+    "LAYOUT": "LAYOUT_numpad_5x4"
   },
   "layouts": {
     "LAYOUT_numpad_5x4": {
