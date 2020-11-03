@@ -77,6 +77,9 @@ class InfoJSONEncoder(json.JSONEncoder):
             elif key in ('height', 'width'):
                 return '40' + str(key)
 
+            elif key == 'community_layouts':
+                return '97community_layouts'
+
             elif key == 'layout_aliases':
                 return '98layout_aliases'
 

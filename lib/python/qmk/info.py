@@ -42,6 +42,8 @@ rgblight_animations = {
     'twinkle': 'RGBLIGHT_EFFECT_TWINKLE'
 }
 
+true_values = ['1', 'on', 'yes']
+false_values = ['0', 'off', 'no']
 
 def info_json(keyboard):
     """Generate the info.json data for a specific keyboard.
@@ -119,6 +121,45 @@ def _extract_diode_direction(info_data, config_c):
 
     if 'DIODE_DIRECTION' in config_c:
         info_data['diode_direction'] = config_c.get('DIODE_DIRECTION')
+
+    return info_data
+
+
+def _extract_community_layouts(info_data, rules):
+    """Find the community layouts in rules.mk.
+    """
+    community_layouts = rules['LAYOUTS'].split() if 'LAYOUTS' in rules else []
+
+    if 'community_layouts' in info_data:
+        for layout in community_layouts:
+            if layout not in info_data['community_layouts']:
+                community_layouts.append(layout)
+
+    else:
+        info_data['community_layouts'] = community_layouts
+
+    return info_data
+
+
+def _extract_features(info_data, rules):
+    """Find all the features enabled in rules.mk.
+    """
+    for key, value in rules.items():
+        if key.endswith('_ENABLE'):
+            key = '_'.join(key.split('_')[:-1]).lower()
+            value = True if value in true_values else False if value in false_values else value
+
+            if 'config_h_features' not in info_data:
+                info_data['config_h_features'] = {}
+
+            if 'features' not in info_data:
+                info_data['features'] = {}
+
+            if key in info_data['features']:
+                _log_warning(info_data, 'Feature %s is specified in both info.json and rules.mk, the rules.mk value wins.' % (key,))
+
+            info_data['features'][key] = value
+            info_data['config_h_features'][key] = value
 
     return info_data
 
@@ -262,6 +303,9 @@ def _extract_rules_mk(info_data):
     else:
         cli.log.warning("%s: Unknown MCU: %s" % (info_data['keyboard_folder'], mcu))
         unknown_processor_rules(info_data, rules)
+
+    _extract_community_layouts(info_data, rules)
+    _extract_features(info_data, rules)
 
     return info_data
 
@@ -415,7 +459,7 @@ def merge_info_jsons(keyboard, info_data):
 
         # Deep merge certain keys
         # FIXME(skullydazed/anyone): this should be generalized more so that we can inteligently merge more than one level deep. It would be nice if we could filter on valid keys too. That may have to wait for a future where we use openapi or something.
-        for key in ('layout_aliases', 'matrix_pins', 'rgblight', 'usb'):
+        for key in ('features', 'layout_aliases', 'matrix_pins', 'rgblight', 'usb'):
             if key in new_info_data:
                 if key not in info_data:
                     info_data[key] = {}
@@ -423,6 +467,14 @@ def merge_info_jsons(keyboard, info_data):
                 info_data[key].update(new_info_data[key])
 
         # Merge the layouts
+        if 'community_layouts' in new_info_data:
+            if 'community_layouts' in info_data:
+                for layout in new_info_data['community_layouts']:
+                    if layout not in info_data['community_layouts']:
+                        info_data['community_layouts'].append(layout)
+            else:
+                info_data['community_layouts'] = new_info_data['community_layouts']
+
         if 'layouts' in new_info_data:
             _merge_layouts(info_data, new_info_data)
 
