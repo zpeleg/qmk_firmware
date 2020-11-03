@@ -90,13 +90,15 @@ ifneq ("$(wildcard $(KEYBOARD_PATH_1)/rules.mk)","")
     include $(KEYBOARD_PATH_1)/rules.mk
 endif
 
-include $(KEYBOARD_OUTPUT)/src/rules.mk
-
 MAIN_KEYMAP_PATH_1 := $(KEYBOARD_PATH_1)/keymaps/$(KEYMAP)
 MAIN_KEYMAP_PATH_2 := $(KEYBOARD_PATH_2)/keymaps/$(KEYMAP)
 MAIN_KEYMAP_PATH_3 := $(KEYBOARD_PATH_3)/keymaps/$(KEYMAP)
 MAIN_KEYMAP_PATH_4 := $(KEYBOARD_PATH_4)/keymaps/$(KEYMAP)
 MAIN_KEYMAP_PATH_5 := $(KEYBOARD_PATH_5)/keymaps/$(KEYMAP)
+
+# Pull in rules from info.json
+INFO_RULES_MK = $(shell bin/qmk generate-rules-mk --quiet --keyboard $(KEYBOARD) --output $(KEYBOARD_OUTPUT)/src/rules.mk)
+include $(INFO_RULES_MK)
 
 # Check for keymap.json first, so we can regenerate keymap.c
 include build_json.mk
@@ -319,9 +321,6 @@ $(KEYBOARD_OUTPUT)/src/info_config.h: $(INFO_JSON_FILES)
 $(KEYBOARD_OUTPUT)/src/layouts.h: $(INFO_JSON_FILES)
 	bin/qmk generate-layouts --quiet --keyboard $(KEYBOARD) --output $(KEYBOARD_OUTPUT)/src/layouts.h
 
-$(KEYBOARD_OUTPUT)/src/rules.mk: $(INFO_JSON_FILES)
-	bin/qmk generate-rules-mk --quiet --keyboard $(KEYBOARD) --output $(KEYBOARD_OUTPUT)/src/rules.mk
-
 # project specific files
 SRC += $(KEYBOARD_SRC) \
     $(KEYMAP_C) \
@@ -396,7 +395,7 @@ all:
 	echo "skipped" >&2
 endif
 
-build: $(KEYBOARD_OUTPUT)/src/info_config.h $(KEYBOARD_OUTPUT)/src/layouts.h $(KEYBOARD_OUTPUT)/src/rules.mk elf cpfirmware
+build: $(KEYBOARD_OUTPUT)/src/info_config.h $(KEYBOARD_OUTPUT)/src/layouts.h elf cpfirmware
 check-size: build
 objs-size: build
 

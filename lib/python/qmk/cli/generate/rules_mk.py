@@ -49,7 +49,9 @@ def generate_rules_mk(cli):
             cli.args.output.replace(cli.args.output.name + '.bak')
         cli.args.output.write_text(rules_mk)
 
-        if not cli.args.quiet:
+        if cli.args.quiet:
+            print(cli.args.output)
+        else:
             cli.log.info('Wrote info_config.h to %s.', cli.args.output)
 
     else:
