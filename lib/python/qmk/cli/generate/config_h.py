@@ -56,11 +56,22 @@ def direct_pins(direct_pins):
         cols = ','.join([col or 'NO_PIN' for col in row])
         rows.append('{' + cols + '}')
 
+    col_count = len(direct_pins[0])
+    row_count = len(direct_pins)
+
     return """
+#ifndef MATRIX_COLS
+#    define MATRIX_COLS %s
+#endif // MATRIX_COLS
+
+#ifndef MATRIX_ROWS
+#    define MATRIX_ROWS %s
+#endif // MATRIX_ROWS
+
 #ifndef DIRECT_PINS
 #    define DIRECT_PINS {%s}
 #endif // DIRECT_PINS
-""" % (','.join(rows))
+""" % (col_count, row_count, ','.join(rows))
 
 
 def col_pins(col_pins):
