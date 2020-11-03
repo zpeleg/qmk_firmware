@@ -70,6 +70,18 @@ def info_json(keyboard):
     return info_data
 
 
+def _extract_debounce(info_data, config_c):
+    """Handle debounce.
+    """
+    if 'debounce' in info_data and 'DEBOUNCE' in config_c:
+        _log_warning(info_data, 'Debounce is specified in both info.json and config.h, the config.h value wins.')
+
+    if 'DEBOUNCE' in config_c:
+        info_data['debounce'] = config_c.get('DEBOUNCE')
+
+    return info_data
+
+
 def _extract_diode_direction(info_data, config_c):
     """Handle the diode direction.
     """
@@ -163,6 +175,7 @@ def _extract_config_h(info_data):
     """
     config_c = config_h(info_data['keyboard_folder'])
 
+    _extract_debounce(info_data, config_c)
     _extract_diode_direction(info_data, config_c)
     _extract_matrix_info(info_data, config_c)
     _extract_usb_info(info_data, config_c)
@@ -330,12 +343,12 @@ def merge_info_jsons(keyboard, info_data):
             continue
 
         # Copy whitelisted keys into `info_data`
-        for key in ('diode_direction', 'keyboard_name', 'manufacturer', 'identifier', 'url', 'maintainer', 'processor', 'bootloader', 'width', 'height'):
+        for key in ('debounce', 'diode_direction', 'keyboard_name', 'manufacturer', 'identifier', 'url', 'maintainer', 'processor', 'bootloader', 'width', 'height'):
             if key in new_info_data:
                 info_data[key] = new_info_data[key]
 
         # Deep merge certain keys
-        for key in ('matrix_pins', 'usb'):
+        for key in ('layout_aliases', 'matrix_pins', 'usb'):
             if key in new_info_data:
                 if key not in info_data:
                     info_data[key] = {}
