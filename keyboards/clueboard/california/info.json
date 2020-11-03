@@ -12,6 +12,7 @@
             [null, "B2"]
         ]
     },
+    "usb": {"pid": "0x23B0"},
     "layouts": {
         "LAYOUT": {
             "layout": [
